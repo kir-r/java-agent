@@ -18,6 +18,7 @@ package com.epam.drill.request
 import com.epam.drill.agent.instrument.*
 import com.epam.drill.common.*
 import com.epam.drill.logger.*
+import com.epam.drill.logging.*
 import com.epam.drill.plugin.*
 import kotlinx.serialization.protobuf.*
 import java.nio.*
@@ -61,6 +62,15 @@ object HttpRequest {
 
     fun storeDrillHeaders(headers: Map<String, String>?) {
         runCatching {
+            logger.debug { "Trying to store headers '$headers'" }
+            logger.debug {
+                "Headers started with Perefix '$DRILL_HEADER_PREFIX'  '${
+                    headers?.filter {
+                        it.key.startsWith(DRILL_HEADER_PREFIX)
+                    }
+                }'"
+            }
+            logger.debug { "Drill session ${headers?.get(DRILL_SESSION_ID_HEADER_NAME)}" }
             headers?.get(DRILL_SESSION_ID_HEADER_NAME)?.let { drillSessionId ->
                 val drillHeaders = headers.filter { it.key.startsWith(DRILL_HEADER_PREFIX) }
                 logger.trace { "for drillSessionId '$drillSessionId' store drillHeaders '$drillHeaders' to thread storage" }
